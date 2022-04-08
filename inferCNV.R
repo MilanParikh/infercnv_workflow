@@ -22,6 +22,7 @@ library(futile.logger)
 #}
 library(infercnv)
 options("preferRaster" = TRUE)
+options(scipen = 100)
 
 # Logging level choices
 C_LEVEL_CHOICES <- c("DEBUG", "INFO", "WARN", "ERROR")
@@ -307,6 +308,20 @@ pargs <- optparse::add_option(pargs, c("--tumor_subcluster_pval"),
                               metavar="Tumor Subcluster p-value",
                               help=paste("Max p-value for defining a significant tumor subcluster. ",
                                          "[Default %default]"))
+
+
+pargs <- optparse::add_option(pargs, c("--tumor_subcluster_partition_method"),
+                              type="character",
+                              default="leiden",
+                              action="store",
+                              dest="tumor_subcluster_partition_method",
+                              metavar="Tumor Subcluster Partition Method",
+                              help=paste("c('leiden', 'random_trees', 'qnorm')",
+                                         "[Default %default]",
+                                         "method for defining tumor subclusters.",
+                                         "leiden: Runs a nearest neighbor search, where communities are then partitionned with the Leiden algorithm.",
+                                         "random_trees: Slow, uses permutation statistics w/ tree construction.",
+                                         "qnorm: defines tree height based on the quantile defined by the tumor_subcluster_pval"))
 
 pargs <- optparse::add_option(pargs, c("--HMM_report_by"),
                               type="character",
@@ -664,6 +679,15 @@ pargs <- optparse::add_option(pargs, c("--median_filter"),
                               metavar="Median Filter",
                               help=paste("If True, turns on additional median",
                                          " filtering for an additional plot. ",
+                                         "[Default %default]"))
+
+pargs <- optparse::add_option(pargs, c("--top_n"),
+                              type="numeric",
+                              default=10,
+                              action="store",
+                              dest="top_n",
+                              metavar="Top n exported CNV",
+                              help=paste("(int) number of top CNVs to export with add_to_seurat.",
                                          "[Default %default]"))
 
 args <- optparse::parse_args(pargs)

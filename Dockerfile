@@ -1,5 +1,5 @@
 # Docker file for inferCNV
-FROM rocker/r-base:4.1.0
+FROM rocker/r-base:4.2.0
 
 LABEL org.label-schema.license="BSD-3-Clause" \
       org.label-schema.vendor="Broad Institute" \
@@ -70,7 +70,7 @@ RUN R -e "BiocManager::install('infercnv')"
 # Checkout and install infercnv
 # update to version bump commit
 RUN git clone https://github.com/broadinstitute/infercnv && cd infercnv && \
-      git checkout master && git checkout 18e7f52ce5dca338365838ff52c30afeee41f5fc && \
+      git checkout master && git checkout ded492de5340fd8c6d446139ffb7e46b5d129bd8 && \
       R CMD INSTALL . 
 
 ENV PATH=${PATH}:/infercnv/scripts

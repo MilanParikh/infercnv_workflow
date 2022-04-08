@@ -19,6 +19,7 @@ workflow infercnv {
         String additional_args = ""
         Int cpu = 4
         String memory = "32G"
+        Int extra_disk_space = 32
         String docker = "mparikhbroad/infercnv_caching:latest"
         Int preemptible = 2
     }
@@ -37,11 +38,11 @@ workflow infercnv {
             HMM_type = HMM_type,
             analysis_mode = analysis_mode,
             tumor_subcluster_pval = tumor_subcluster_pval,
-            median_filter = median_filter,
             additional_args = additional_args,
             up_to_step = 3,
             cpu=cpu,
             memory=memory,
+            extra_disk_space=extra_disk_space,
             docker=docker,
             preemptible=preemptible
     }
@@ -61,11 +62,11 @@ workflow infercnv {
             HMM_type = HMM_type,
             analysis_mode = analysis_mode,
             tumor_subcluster_pval = tumor_subcluster_pval,
-            median_filter = median_filter,
             additional_args = additional_args,
             up_to_step = 10,
             cpu=cpu,
             memory=memory,
+            extra_disk_space=extra_disk_space,
             docker=docker,
             preemptible=preemptible
     }
@@ -85,11 +86,11 @@ workflow infercnv {
             HMM_type = HMM_type,
             analysis_mode = analysis_mode,
             tumor_subcluster_pval = tumor_subcluster_pval,
-            median_filter = median_filter,
             additional_args = additional_args,
             up_to_step = 15,
             cpu=cpu,
             memory=memory,
+            extra_disk_space=extra_disk_space,
             docker=docker,
             preemptible=preemptible
     }
@@ -109,11 +110,11 @@ workflow infercnv {
             HMM_type = HMM_type,
             analysis_mode = analysis_mode,
             tumor_subcluster_pval = tumor_subcluster_pval,
-            median_filter = median_filter,
             additional_args = additional_args,
             up_to_step = 18,
             cpu=cpu,
             memory=memory,
+            extra_disk_space=extra_disk_space,
             docker=docker,
             preemptible=preemptible
     }
@@ -133,11 +134,11 @@ workflow infercnv {
             HMM_type = HMM_type,
             analysis_mode = analysis_mode,
             tumor_subcluster_pval = tumor_subcluster_pval,
-            median_filter = median_filter,
             additional_args = additional_args,
             up_to_step = 20,
             cpu=cpu,
             memory=memory,
+            extra_disk_space=extra_disk_space,
             docker=docker,
             preemptible=preemptible
     }
@@ -161,6 +162,7 @@ workflow infercnv {
             additional_args = additional_args,
             cpu=cpu,
             memory=memory,
+            extra_disk_space=extra_disk_space,
             docker=docker,
             preemptible=preemptible
     }
@@ -185,7 +187,11 @@ task run_infercnv_initial {
         String analysis_mode
         String tumor_subcluster_pval
         Boolean median_filter = false
+        Boolean no_prelim_plot = true
+        Boolean no_plot = true
+        String output_format = 'NA'
         String memory
+        Int extra_disk_space
         Int cpu
         String docker
         Int preemptible
@@ -214,6 +220,9 @@ task run_infercnv_initial {
         --tumor_subcluster_pval ~{tumor_subcluster_pval} \
         --median_filter ~{median_filter} \
         --up_to_step ~{up_to_step} \
+        --no_plot ~{no_plot} \
+        --no_prelim_plot ~{no_prelim_plot} \
+        --output_format ~{output_format} \
         ~{additional_args} \
         
         tar -zcf infercnv.tar.gz infercnv
@@ -227,7 +236,7 @@ task run_infercnv_initial {
         docker: docker
         memory: memory
         bootDiskSizeGb: 12
-        disks: "local-disk " + ceil(size(raw_counts_matrix, "GB")*2 + 32) + " HDD"
+        disks: "local-disk " + ceil(size(raw_counts_matrix, "GB")*2 + extra_disk_space) + " HDD"
         cpu: cpu
         preemptible: preemptible
     }
@@ -249,8 +258,11 @@ task run_infercnv_intermediate {
         String analysis_mode
         String tumor_subcluster_pval
         Boolean median_filter = false
+        Boolean no_prelim_plot = true
         Boolean no_plot = true
+        String output_format = 'NA'
         String memory
+        Int extra_disk_space
         Int cpu
         String docker
         Int preemptible
@@ -280,7 +292,9 @@ task run_infercnv_intermediate {
         --analysis_mode ~{analysis_mode} \
         --tumor_subcluster_pval ~{tumor_subcluster_pval} \
         --median_filter ~{median_filter} \
-        --no_plot ~{no_plot}
+        --no_plot ~{no_plot} \
+        --no_prelim_plot ~{no_prelim_plot} \
+        --output_format ~{output_format} \
         --up_to_step ~{up_to_step} \
         ~{additional_args} \
         
@@ -295,7 +309,7 @@ task run_infercnv_intermediate {
         docker: docker
         memory: memory
         bootDiskSizeGb: 12
-        disks: "local-disk " + ceil(size(raw_counts_matrix, "GB")*2 + 32) + " HDD"
+        disks: "local-disk " + ceil(size(raw_counts_matrix, "GB")*2 + extra_disk_space) + " HDD"
         cpu: cpu
         preemptible: preemptible
     }
@@ -318,6 +332,7 @@ task run_infercnv_final {
         String tumor_subcluster_pval
         Boolean median_filter = false
         String memory
+        Int extra_disk_space
         Int cpu
         String docker
         Int preemptible
@@ -359,7 +374,7 @@ task run_infercnv_final {
         docker: docker
         memory: memory
         bootDiskSizeGb: 12
-        disks: "local-disk " + ceil(size(raw_counts_matrix, "GB")*2 + 32) + " HDD"
+        disks: "local-disk " + ceil(size(raw_counts_matrix, "GB")*2 + extra_disk_space) + " HDD"
         cpu: cpu
         preemptible: preemptible
     }
