@@ -681,6 +681,16 @@ pargs <- optparse::add_option(pargs, c("--median_filter"),
                                          " filtering for an additional plot. ",
                                          "[Default %default]"))
 
+pargs <- optparse::add_option(pargs, c("--plot_chr_scale"),
+                              type="logical",
+                              default=FALSE,
+                              action="store_true",
+                              dest="plot_chr_scale",
+                              metavar="Plot chromosome scale",
+                              help=paste("Whether to scale the chromosme width on the heatmap based on",
+                                        " their actual size rather than just the number of expressed genes.",
+                                         "[Default %default]"))
+
 pargs <- optparse::add_option(pargs, c("--top_n"),
                               type="numeric",
                               default=10,
@@ -786,6 +796,7 @@ infercnv_obj = infercnv::run(infercnv_obj=infercnv_obj,
                             no_plot=args$no_plot,
                             no_prelim_plot=args$no_prelim_plot,
                             output_format=args$output_format,
+                            plot_chr_scale=args$plot_chr_scale,
                             debug=args$debug,
                             #prune_outliers=args$prune_outliers,
                             final_scale_limits=args$final_scale_limits,
@@ -815,6 +826,7 @@ if (args$median_filter) {
              x.range=args$final_scale_limits,
              title="inferCNV",
              output_filename="infercnv_pdf",
-             write_expr_matrix=TRUE)
+             write_expr_matrix=TRUE,
+             plot_chr_scale=args$plot_chr_scale)
 
 }
