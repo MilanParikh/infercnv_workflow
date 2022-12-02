@@ -1,4 +1,4 @@
-# infercnv_terra
+# infercnv_workflow
 Terra workflow for inferCNV with cell caching
 
 ## Automation Script Jupyter Notebook
@@ -18,6 +18,8 @@ Dockerfile - contains the R and Python setup required for version 1.8.1 of infer
 ## WDL
 The workflow is set up with 6 roughly evenly timed stages using the "up_to_step" flag in order to enable cell caching. This allows for a long running inferCNV process to not lose too much progress if preempted.
 
-(Already uploaded here: https://portal.firecloud.org/?return=terra#methods/mparikh/infercnv_caching/3)
+(Already uploaded here: https://portal.firecloud.org/?return=terra#methods/mparikh/infercnv_resumable/3)
 
 At the end of each step the outputs are compressed into a .tar.gz archive and then the follow step will untar and resume
+
+infercnv_resumable.wdl is the newest/best version to use, it allows for resuming from an intermediate step using the .tar.gz archive saved from previous steps. 
